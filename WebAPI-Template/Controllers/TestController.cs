@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI_Template.Contracts.V1;
 
 namespace WebAPI_Template.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
+    [ApiController]   
     public class TestController : ControllerBase
     {
        
@@ -19,7 +19,7 @@ namespace WebAPI_Template.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet(ApiRoutes.Tests.GetAll)]
         public IActionResult Get()
         {
             return Ok(new { name = "An" });
