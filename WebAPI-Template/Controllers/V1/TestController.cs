@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPI_Template.Contracts.V1;
 
-namespace WebAPI_Template.Controllers
+namespace WebAPI_Template.Controllers.V1
 {
     [ApiController]   
     public class TestController : ControllerBase

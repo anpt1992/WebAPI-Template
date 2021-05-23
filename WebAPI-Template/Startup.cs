@@ -5,7 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
+using System.Linq;
 using WebAPI_Template.Data;
+using WebAPI_Template.Installers;
 
 namespace WebAPI_Template
 {
@@ -21,8 +24,8 @@ namespace WebAPI_Template
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(options => options.UseLazyLoadingProxies().UseMySql(Configuration["ConnectionString:SimpleDB"], ServerVersion.AutoDetect(Configuration["ConnectionString:SimpleDB"])));
-
+            
+            services.InstallServicesInAssembly(Configuration);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
