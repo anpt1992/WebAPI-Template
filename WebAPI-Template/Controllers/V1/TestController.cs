@@ -16,7 +16,6 @@ namespace WebAPI_Template.Controllers.V1
     public class TestController : ControllerBase
     {
 
-
         private readonly ITestService _testService;
 
         public TestController(ITestService testService)

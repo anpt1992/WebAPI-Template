@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>WebAPI_Template</RootNamespace>
+    <UserSecretsId>63a9d078-e7ce-4065-a304-5b98ace31efd</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
