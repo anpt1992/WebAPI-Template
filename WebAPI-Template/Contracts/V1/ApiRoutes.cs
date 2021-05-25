@@ -14,6 +14,10 @@ namespace WebAPI_Template.Contracts.V1
         public static class Tests
         {
             public const string GetAll = Base + "/tests";
+            public const string Get = Base + "/tests/{testId}";
+            public const string Create = Base + "/tests";
+            public const string Update = Base + "/tests/{testId}";
+            public const string Delete = Base + "/tests/{testId}";
         }
     }
 }

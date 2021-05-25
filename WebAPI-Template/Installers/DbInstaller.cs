@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebAPI_Template.Data;
+using WebAPI_Template.Services;
 
 namespace WebAPI_Template.Installers
 {
@@ -12,6 +13,8 @@ namespace WebAPI_Template.Installers
         {
             services.AddDbContext<DataContext>(options => options.UseLazyLoadingProxies().UseMySql(configuration["ConnectionString:SimpleDB"], ServerVersion.AutoDetect(configuration["ConnectionString:SimpleDB"])));
             services.AddIdentityCore<IdentityUser>().AddEntityFrameworkStores<DataContext>();
+
+            services.AddSingleton<ITestService, TestService>();
         }
     }
 }
