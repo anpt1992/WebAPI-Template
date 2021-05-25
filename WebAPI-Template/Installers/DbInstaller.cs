@@ -12,9 +12,9 @@ namespace WebAPI_Template.Installers
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<DataContext>(options => options.UseLazyLoadingProxies().UseMySql(configuration["ConnectionString:SimpleDB"], ServerVersion.AutoDetect(configuration["ConnectionString:SimpleDB"])));
-            services.AddIdentityCore<IdentityUser>().AddEntityFrameworkStores<DataContext>();
+            services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<DataContext>();
 
-            services.AddSingleton<ITestService, TestService>();
+            services.AddScoped<ITestService, TestService>();
         }
     }
 }

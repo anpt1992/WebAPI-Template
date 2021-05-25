@@ -1,57 +1,58 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI_Template.Data;
 using WebAPI_Template.Domain;
 
 namespace WebAPI_Template.Services
 {
     public interface ITestService
     {
-        public List<Test> GetTests();
-        public Test GetTestById(Guid testId);
-        bool UpdateTest(Test testToUpdate);
-        bool DeleteTest(Guid testId);
+        Task<List<Test>> GetTestsAsync();     
+        Task<bool> CreateTestAsync(Test test);
+        Task<Test> GetTestByIdAsync(Guid testId);
+        Task<bool> UpdateTestAsync(Test testToUpdate);
+        Task<bool> DeleteTestAsync(Guid testId);
     }
     public class TestService : ITestService
     {
-        private readonly List<Test> _tests;
+        private readonly DataContext _dataContext;
 
-        public TestService()
+        public TestService(DataContext dataContext)
         {
-            _tests = new List<Test>();
-            for (int i = 0; i < 5; i++)
-            {
-                _tests.Add(new Test { Id = Guid.NewGuid(), Name = $"Name{i}" });
-            }
+            _dataContext = dataContext;
         }
 
-        public Test GetTestById(Guid testId)
+        public async Task<List<Test>> GetTestsAsync()
         {
-            return _tests.SingleOrDefault(x => x.Id == testId);
+            return await _dataContext.Tests.ToListAsync();
         }
 
-        public List<Test> GetTests()
+        public async Task<Test> GetTestByIdAsync(Guid testId)
         {
-            return _tests;
+            return await _dataContext.Tests.SingleOrDefaultAsync(x => x.Id == testId);
         }
-        public bool UpdateTest(Test testToUpdate)
+        public async Task<bool> CreateTestAsync(Test test)
         {
-            var exists = GetTestById(testToUpdate.Id) != null;
-            if (!exists)
-                return false;
-            var index = _tests.FindIndex(x => x.Id == testToUpdate.Id);
-            _tests[index] = testToUpdate;
-            return true;
+            await _dataContext.Tests.AddAsync(test);
+            var created = await _dataContext.SaveChangesAsync();
+            return created > 0;
         }
-        public bool DeleteTest(Guid testId)
+        public async Task<bool> UpdateTestAsync(Test testToUpdate)
         {
-            var test = GetTestById(testId);
-            if (test == null)
-                return false;
+            _dataContext.Tests.Update(testToUpdate);
+            var updated = await _dataContext.SaveChangesAsync();
+            return updated > 0;
+        }
+        public async Task<bool> DeleteTestAsync(Guid testId)
+        {
+            var test = await GetTestByIdAsync(testId);
+            _dataContext.Tests.Remove(test);
+            var deleted = await _dataContext.SaveChangesAsync();
 
-            _tests.Remove(test);
-            return true;
+            return deleted > 0;
         }
 
     }

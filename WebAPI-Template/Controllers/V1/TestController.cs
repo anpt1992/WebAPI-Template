@@ -26,28 +26,26 @@ namespace WebAPI_Template.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Tests.GetAll)]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return Ok(_testService.GetTests());
+            return Ok(await _testService.GetTestsAsync());
         }
 
         [HttpGet(ApiRoutes.Tests.Get)]
-        public IActionResult Get([FromRoute] Guid testId)
+        public async Task<IActionResult> Get([FromRoute] Guid testId)
         {
-            var test = _testService.GetTestById(testId);
+            var test = await _testService.GetTestByIdAsync(testId);
             if (test == null)
                 return NotFound();
             return Ok(test);
         }
 
         [HttpPost(ApiRoutes.Tests.Create)]
-        public IActionResult Create([FromBody] CreateTestRequest testRequest)
+        public async Task<IActionResult> Create([FromBody] CreateTestRequest testRequest)
         {
-            var test = new Test { Id = testRequest.Id };
-            if (test.Id != Guid.Empty)
-                test.Id = Guid.NewGuid();
-
-            _testService.GetTests().Add(test);
+            var test = new Test { Name = testRequest.Name };
+           
+            await _testService.CreateTestAsync(test);
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUrl = baseUrl + "/" + ApiRoutes.Tests.Get.Replace("{testId}", test.Id.ToString());
             var response = new TestResponse { Id = test.Id };
@@ -55,7 +53,7 @@ namespace WebAPI_Template.Controllers.V1
             return Created(locationUrl, response);
         }
         [HttpPut(ApiRoutes.Tests.Update)]
-        public IActionResult Update([FromRoute] Guid testId, [FromBody] UpdateTestRequest request)
+        public async Task<IActionResult> Update([FromRoute] Guid testId, [FromBody] UpdateTestRequest request)
         {
             var test = new Test
             {
@@ -63,7 +61,7 @@ namespace WebAPI_Template.Controllers.V1
                 Name = request.Name
             };
 
-            var updated = _testService.UpdateTest(test);
+            var updated = await _testService.UpdateTestAsync(test);
 
             if (updated)
                 return Ok(test);
@@ -71,10 +69,10 @@ namespace WebAPI_Template.Controllers.V1
             return NotFound();
         }
         [HttpDelete(ApiRoutes.Tests.Delete)]
-        public IActionResult Delete([FromRoute] Guid testId)
+        public async Task<IActionResult> Delete([FromRoute] Guid testId)
         {
-           
-            var deleted = _testService.DeleteTest(testId);
+
+            var deleted = await _testService.DeleteTestAsync(testId);
 
             if (deleted)
                 return NoContent();

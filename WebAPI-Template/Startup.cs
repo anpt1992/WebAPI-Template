@@ -27,6 +27,7 @@ namespace WebAPI_Template
             
             services.InstallServicesInAssembly(Configuration);
 
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

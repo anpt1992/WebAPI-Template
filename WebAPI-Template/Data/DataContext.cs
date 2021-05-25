@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WebAPI_Template.Domain;
 
 namespace WebAPI_Template.Data
 {
@@ -14,18 +15,22 @@ namespace WebAPI_Template.Data
         {
         }
 
-        public DataContext(DbContextOptions opts) : base(opts)
+        public DataContext(DbContextOptions<DataContext> opts) : base(opts)
         {
         }
 
-     
+        public DbSet<Test> Tests { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-        
+
+            builder.Entity<Test>().Property<bool>("IsDeleted");
+            builder.Entity<Test>().HasQueryFilter(m => EF.Property<bool>(m, "IsDeleted") == false);
+
         }
         private void UpdateSoftDeleteStatuses()
         {
