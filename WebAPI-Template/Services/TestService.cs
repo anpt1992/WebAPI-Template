@@ -15,6 +15,7 @@ namespace WebAPI_Template.Services
         Task<Test> GetTestByIdAsync(Guid testId);
         Task<bool> UpdateTestAsync(Test testToUpdate);
         Task<bool> DeleteTestAsync(Guid testId);
+        Task<bool> UserOwnsTestAsync(Guid testId, string userId);
     }
     public class TestService : ITestService
     {
@@ -54,6 +55,21 @@ namespace WebAPI_Template.Services
 
             return deleted > 0;
         }
+
+        public async Task<bool> UserOwnsTestAsync(Guid testId, string userId)
+        {
+            var test = await _dataContext.Tests.AsNoTracking().SingleOrDefaultAsync(x => x.Id == testId);
+            if(test == null)
+            {
+                return false;
+            }
+            if(test.UserId != userId)
+            {
+                return false;
+            } 
+            return true;
+        }
+        
 
     }
 }

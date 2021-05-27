@@ -6,6 +6,7 @@ using WebAPI_Template.Contracts.V1;
 using WebAPI_Template.Contracts.V1.Requests;
 using WebAPI_Template.Contracts.V1.Responses;
 using WebAPI_Template.Domain;
+using WebAPI_Template.Extensions;
 using WebAPI_Template.Services;
 
 namespace WebAPI_Template.Controllers.V1
@@ -41,8 +42,12 @@ namespace WebAPI_Template.Controllers.V1
         [HttpPost(ApiRoutes.Tests.Create)]
         public async Task<IActionResult> Create([FromBody] CreateTestRequest testRequest)
         {
-            var test = new Test { Name = testRequest.Name };
-           
+            var test = new Test
+            {
+                Name = testRequest.Name,
+                UserId = HttpContext.GetUserId()
+            };
+
             await _testService.CreateTestAsync(test);
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUrl = baseUrl + "/" + ApiRoutes.Tests.Get.Replace("{testId}", test.Id.ToString());
@@ -53,11 +58,15 @@ namespace WebAPI_Template.Controllers.V1
         [HttpPut(ApiRoutes.Tests.Update)]
         public async Task<IActionResult> Update([FromRoute] Guid testId, [FromBody] UpdateTestRequest request)
         {
-            var test = new Test
+            var userOwnsTest = await _testService.UserOwnsTestAsync(testId, HttpContext.GetUserId());
+            if(!userOwnsTest)
             {
-                Id = testId,
-                Name = request.Name
-            };
+                return BadRequest(new { error = "You do not own this test" });
+            }
+
+            var test = await _testService.GetTestByIdAsync(testId);
+            test.Name = request.Name;
+            
 
             var updated = await _testService.UpdateTestAsync(test);
 
@@ -69,6 +78,11 @@ namespace WebAPI_Template.Controllers.V1
         [HttpDelete(ApiRoutes.Tests.Delete)]
         public async Task<IActionResult> Delete([FromRoute] Guid testId)
         {
+            var userOwnsTest = await _testService.UserOwnsTestAsync(testId, HttpContext.GetUserId());
+            if (!userOwnsTest)
+            {
+                return BadRequest(new { error = "You do not own this test" });
+            }
 
             var deleted = await _testService.DeleteTestAsync(testId);
 
