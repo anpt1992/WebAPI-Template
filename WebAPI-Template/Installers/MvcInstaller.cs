@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebAPI_Template.Options;
+using WebAPI_Template.Services;
 
 namespace WebAPI_Template.Installers
 {
@@ -20,6 +21,8 @@ namespace WebAPI_Template.Installers
             var jwtSettings = new JwtSettings();
             configuration.Bind(nameof(jwtSettings), jwtSettings);
             services.AddSingleton(jwtSettings);
+
+            services.AddScoped<IIdentityService, IdentityService>();
 
             services.AddAuthentication(x =>
             {

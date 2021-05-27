@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using WebAPI_Template.Services;
 namespace WebAPI_Template.Controllers.V1
 {
     [ApiController]
+    [Authorize]
     public class TestController : ControllerBase
     {
 

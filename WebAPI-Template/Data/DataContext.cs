@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -30,12 +31,15 @@ namespace WebAPI_Template.Data
 
             builder.Entity<Test>().Property<bool>("IsDeleted");
             builder.Entity<Test>().HasQueryFilter(m => EF.Property<bool>(m, "IsDeleted") == false);
-
         }
         private void UpdateSoftDeleteStatuses()
         {
             foreach (var entry in ChangeTracker.Entries())
             {
+                if (!entry.CurrentValues.TryGetValue("IsDeleted",out bool _))
+                {
+                    continue;
+                }
                 switch (entry.State)
                 {
                     case EntityState.Added:

@@ -19,5 +19,11 @@ namespace WebAPI_Template.Contracts.V1
             public const string Update = Base + "/tests/{testId}";
             public const string Delete = Base + "/tests/{testId}";
         }
+
+        public static class Identity
+        {
+            public const string Login = Base + "/identity/login";
+            public const string Register = Base + "/identity/register";
+        }
     }
 }

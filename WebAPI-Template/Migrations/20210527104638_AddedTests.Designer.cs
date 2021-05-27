@@ -9,7 +9,7 @@ using WebAPI_Template.Data;
 namespace WebAPI_Template.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210525142027_AddedTests")]
+    [Migration("20210527104638_AddedTests")]
     partial class AddedTests
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
