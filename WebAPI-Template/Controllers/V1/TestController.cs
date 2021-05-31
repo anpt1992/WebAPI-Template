@@ -25,11 +25,26 @@ namespace WebAPI_Template.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Tests.GetAll)]
-        [Authorize(Policy ="TagViewer")]
+
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _testService.GetTestsAsync());
         }
+
+        [HttpGet(ApiRoutes.Tests.GetAllWithClaims)]
+        [Authorize(Policy = "TagViewer")]
+        public async Task<IActionResult> GetAllWithClaims()
+        {
+            return Ok(await _testService.GetTestsAsync());
+        }
+
+        [HttpGet(ApiRoutes.Tests.GetAllWithRoles)]
+        [Authorize(Roles = "Tester")]
+        public async Task<IActionResult> GetAllWithRoles()
+        {
+            return Ok(await _testService.GetTestsAsync());
+        }
+
 
         [HttpGet(ApiRoutes.Tests.Get)]
         public async Task<IActionResult> Get([FromRoute] Guid testId)
@@ -60,14 +75,14 @@ namespace WebAPI_Template.Controllers.V1
         public async Task<IActionResult> Update([FromRoute] Guid testId, [FromBody] UpdateTestRequest request)
         {
             var userOwnsTest = await _testService.UserOwnsTestAsync(testId, HttpContext.GetUserId());
-            if(!userOwnsTest)
+            if (!userOwnsTest)
             {
                 return BadRequest(new { error = "You do not own this test" });
             }
 
             var test = await _testService.GetTestByIdAsync(testId);
             test.Name = request.Name;
-            
+
 
             var updated = await _testService.UpdateTestAsync(test);
 

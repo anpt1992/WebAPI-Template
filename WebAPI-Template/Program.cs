@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,7 +17,21 @@ namespace WebAPI_Template
             using (var serviceScope = host.Services.CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
+
                 await dbContext.Database.MigrateAsync();
+
+                var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                if(!await roleManager.RoleExistsAsync("Admin"))
+                {
+                    var adminRole = new IdentityRole("Admin");
+                    await roleManager.CreateAsync(adminRole);
+                }
+                if (!await roleManager.RoleExistsAsync("Tester"))
+                {
+                    var testerRole = new IdentityRole("Tester");
+                    await roleManager.CreateAsync(testerRole);
+                }
             }
             await host.RunAsync();
         }

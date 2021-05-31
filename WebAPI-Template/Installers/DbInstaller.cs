@@ -17,7 +17,7 @@ namespace WebAPI_Template.Installers
                 configuration["ConnectionString:SimpleDB"] = Environment.GetEnvironmentVariable("ConnectionString");
             }
             services.AddDbContext<DataContext>(options => options.UseLazyLoadingProxies().UseMySql(configuration["ConnectionString:SimpleDB"], ServerVersion.AutoDetect(configuration["ConnectionString:SimpleDB"])));
-            services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<DataContext>();
+            services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<DataContext>();
 
             services.AddScoped<ITestService, TestService>();
         }
