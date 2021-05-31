@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebAPI_Template.Authorization;
 using WebAPI_Template.Options;
 using WebAPI_Template.Services;
 
@@ -50,8 +52,14 @@ namespace WebAPI_Template.Installers
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("TagViewer", builder => builder.RequireClaim("tags.view","true"));
+                options.AddPolicy("TagViewer", builder => builder.RequireClaim("tags.view", "true"));
+                options.AddPolicy("MustWorkForAnpt1992", policy =>
+                {
+                    policy.AddRequirements(new WorkForCompanyRequirement("anpt1992.xyz"));
+                });
             });
+
+            services.AddSingleton<IAuthorizationHandler, WorkForCompanyHandler>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

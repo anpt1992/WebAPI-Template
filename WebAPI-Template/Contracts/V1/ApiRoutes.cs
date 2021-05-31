@@ -20,6 +20,7 @@ namespace WebAPI_Template.Contracts.V1
             public const string Delete = Base + "/tests/{testId}";
             public const string GetAllWithClaims = Base + "/tests_claims";
             public const string GetAllWithRoles = Base + "/tests_roles";
+            public const string GetAllWithAuthorizationHandles = Base + "/tests_authorization_handlers";
         }
 
         public static class Identity

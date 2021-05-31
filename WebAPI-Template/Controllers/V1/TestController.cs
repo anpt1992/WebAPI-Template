@@ -45,6 +45,13 @@ namespace WebAPI_Template.Controllers.V1
             return Ok(await _testService.GetTestsAsync());
         }
 
+        [HttpGet(ApiRoutes.Tests.GetAllWithAuthorizationHandles)]
+        [Authorize(Policy = "MustWorkForAnpt1992")]
+        public async Task<IActionResult> GetAllWithAuthorizationHandles()
+        {
+            return Ok(await _testService.GetTestsAsync());
+        }
+
 
         [HttpGet(ApiRoutes.Tests.Get)]
         public async Task<IActionResult> Get([FromRoute] Guid testId)
