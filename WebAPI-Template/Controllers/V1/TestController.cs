@@ -25,6 +25,7 @@ namespace WebAPI_Template.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Tests.GetAll)]
+        [Authorize(Policy ="TagViewer")]
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _testService.GetTestsAsync());

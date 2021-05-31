@@ -14,7 +14,7 @@ using WebAPI_Template.Services;
 
 namespace WebAPI_Template.Installers
 {
-    public class MvcInstaller:IInstaller
+    public class MvcInstaller : IInstaller
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -44,8 +44,13 @@ namespace WebAPI_Template.Installers
             .AddJwtBearer(x =>
             {
                 x.RequireHttpsMetadata = false;
-                x.SaveToken = true;                
+                x.SaveToken = true;
                 x.TokenValidationParameters = tokenValidationParameters;
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("TagViewer", builder => builder.RequireClaim("tags.view","true"));
             });
 
             services.AddControllers();
@@ -53,7 +58,7 @@ namespace WebAPI_Template.Installers
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI_Template", Version = "v1" });
 
-                              
+
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
                     Name = "Authorization",
