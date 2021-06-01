@@ -16,6 +16,8 @@ namespace WebAPI_Template.Services
         Task<bool> UpdatePostAsync(Post testToUpdate);
         Task<bool> DeletePostAsync(Guid testId);
         Task<bool> UserOwnsPostAsync(Guid testId, string userId);
+        Task<List<Tag>> GetAllTagsAsync();
+        Task<bool> DeleteTagAsync(string tagName);
     }
     public class PostService : IPostService
     {
@@ -35,11 +37,15 @@ namespace WebAPI_Template.Services
         {
             return await _dataContext.Posts.SingleOrDefaultAsync(x => x.Id == testId);
         }
-        public async Task<bool> CreatePostAsync(Post test)
+        public async Task<bool> CreatePostAsync(Post post)
         {
-            await _dataContext.Posts.AddAsync(test);
-            var created = await _dataContext.SaveChangesAsync();
-            return created > 0;
+            post.Tags?.ForEach(postTag => postTag.TagName = postTag.TagName.ToLower());
+
+            await this.AddNewTagsAsync(post);
+            _dataContext.Posts.Add(post);
+            var numCreated = await _dataContext.SaveChangesAsync();
+
+            return numCreated > 0;
         }
         public async Task<bool> UpdatePostAsync(Post testToUpdate)
         {
@@ -69,7 +75,44 @@ namespace WebAPI_Template.Services
             } 
             return true;
         }
-        
+        public async Task<List<Tag>> GetAllTagsAsync()
+        {
+            return await _dataContext.Tags.AsNoTracking().ToListAsync();
+        }
+        public async Task<bool> DeleteTagAsync(string tagName)
+        {
+            var tagToDelete = await _dataContext.Tags.FirstOrDefaultAsync(tag => tag.Name == tagName);
+
+            if (tagToDelete == null)
+            {
+                return false;
+            }
+
+            _dataContext.Tags.Remove(tagToDelete);
+            var numDeleted = await _dataContext.SaveChangesAsync();
+
+            return numDeleted > 0;
+        }
+
+        private async Task AddNewTagsAsync(Post post)
+        {
+            foreach (var newTag in post.Tags)
+            {
+                var matchingTag = await _dataContext.Tags.SingleOrDefaultAsync(existingTag => existingTag.Name == newTag.TagName);
+
+                if (matchingTag != null)
+                {
+                    continue;
+                }
+
+                _dataContext.Tags.Add(new Tag
+                {
+                    Name = newTag.TagName,
+                    CreatorId = post.UserId,
+                    CreatedOn = DateTime.UtcNow
+                });
+            }
+        }
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using WebAPI_Template.Contracts.V1;
 using WebAPI_Template.Contracts.V1.Requests;
@@ -28,21 +29,42 @@ namespace WebAPI_Template.Controllers.V1
 
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _postService.GetPostsAsync());
+            var posts = await _postService.GetPostsAsync();
+
+            return Ok(posts.Select(post => new PostResponse
+            {
+                Id = post.Id,
+                Name = post.Name,
+                Tags = post.Tags.Select(postTag => postTag.TagName)
+            }));
         }
 
         [HttpGet(ApiRoutes.Posts.GetAllWithClaims)]
         [Authorize(Policy = "TagViewer")]
         public async Task<IActionResult> GetAllWithClaims()
         {
-            return Ok(await _postService.GetPostsAsync());
+            var posts = await _postService.GetPostsAsync();
+
+            return Ok(posts.Select(post => new PostResponse
+            {
+                Id = post.Id,
+                Name = post.Name,
+                Tags = post.Tags.Select(postTag => postTag.TagName)
+            }));
         }
 
         [HttpGet(ApiRoutes.Posts.GetAllWithRoles)]
         [Authorize(Roles = "Tester")]
         public async Task<IActionResult> GetAllWithRoles()
         {
-            return Ok(await _postService.GetPostsAsync());
+            var posts = await _postService.GetPostsAsync();
+
+            return Ok(posts.Select(post => new PostResponse
+            {
+                Id = post.Id,
+                Name = post.Name,
+                Tags = post.Tags.Select(postTag => postTag.TagName)
+            }));
         }
 
         [HttpGet(ApiRoutes.Posts.GetAllWithAuthorizationHandles)]
@@ -56,25 +78,39 @@ namespace WebAPI_Template.Controllers.V1
         [HttpGet(ApiRoutes.Posts.Get)]
         public async Task<IActionResult> Get([FromRoute] Guid testId)
         {
-            var test = await _postService.GetPostByIdAsync(testId);
-            if (test == null)
+            var post = await _postService.GetPostByIdAsync(testId);
+            if (post == null)
                 return NotFound();
-            return Ok(test);
+            return Ok(new PostResponse
+            {
+                Id = post.Id,
+                Name = post.Name,
+                Tags = post.Tags.Select(postTag => postTag.TagName)
+            });
         }
 
         [HttpPost(ApiRoutes.Posts.Create)]
-        public async Task<IActionResult> Create([FromBody] CreatePostRequest testRequest)
+        public async Task<IActionResult> Create([FromBody] CreatePostRequest postRequest)
         {
-            var test = new Post
+            var newPostId = Guid.NewGuid();
+            var post = new Post
             {
-                Name = testRequest.Name,
-                UserId = HttpContext.GetUserId()
+                Id = newPostId,
+                Name = postRequest.Name,
+                UserId = HttpContext.GetUserId(),
+                Tags = postRequest.Tags.Select(tagName => new PostTag { TagName = tagName, PostId = newPostId }).ToList()
             };
 
-            await _postService.CreatePostAsync(test);
+            await _postService.CreatePostAsync(post);
+
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var locationUrl = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{testId}", test.Id.ToString());
-            var response = new PostResponse { Id = test.Id };
+            var locationUrl = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{testId}", post.Id.ToString());
+            var response = new PostResponse
+            {
+                Id = post.Id,
+                Name = post.Name,
+                Tags = post.Tags.Select(postTag => postTag.TagName)
+            };
 
             return Created(locationUrl, response);
         }
@@ -87,14 +123,20 @@ namespace WebAPI_Template.Controllers.V1
                 return BadRequest(new { error = "You do not own this test" });
             }
 
-            var test = await _postService.GetPostByIdAsync(testId);
-            test.Name = request.Name;
+            var post = await _postService.GetPostByIdAsync(testId);
+            post.Name = request.Name;
+            post.Tags = request.Tags.Select(tagName => new PostTag { TagName = tagName, PostId = post.Id }).ToList();
 
 
-            var updated = await _postService.UpdatePostAsync(test);
+            var updated = await _postService.UpdatePostAsync(post);
 
             if (updated)
-                return Ok(test);
+                return Ok(new PostResponse
+                {
+                    Id = post.Id,
+                    Name = post.Name,
+                    Tags = post.Tags.Select(postTag => postTag.TagName)
+                });
 
             return NotFound();
         }

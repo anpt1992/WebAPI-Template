@@ -219,9 +219,6 @@ namespace WebAPI_Template.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
@@ -233,6 +230,21 @@ namespace WebAPI_Template.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("WebAPI_Template.Domain.PostTag", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("TagName")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("PostId", "TagName");
+
+                    b.HasIndex("TagName");
+
+                    b.ToTable("PostTags");
                 });
 
             modelBuilder.Entity("WebAPI_Template.Domain.RefreshToken", b =>
@@ -264,6 +276,24 @@ namespace WebAPI_Template.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("WebAPI_Template.Domain.Tag", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatorId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Name");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -326,6 +356,23 @@ namespace WebAPI_Template.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebAPI_Template.Domain.PostTag", b =>
+                {
+                    b.HasOne("WebAPI_Template.Domain.Post", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebAPI_Template.Domain.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("WebAPI_Template.Domain.RefreshToken", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
@@ -333,6 +380,20 @@ namespace WebAPI_Template.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebAPI_Template.Domain.Tag", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("WebAPI_Template.Domain.Post", b =>
+                {
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

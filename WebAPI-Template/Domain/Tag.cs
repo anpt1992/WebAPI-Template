@@ -8,18 +8,13 @@ using System.Threading.Tasks;
 
 namespace WebAPI_Template.Domain
 {
-    public class Post
+    public class Tag
     {
         [Key]
-        public Guid Id { get; set; }
-
         public string Name { get; set; }
-
-        public string UserId { get; set; }
-
-        [ForeignKey(nameof(UserId))]
-        public virtual IdentityUser User { get; set; }
-
-        public virtual List<PostTag> Tags { get; set; }
+        public string CreatorId { get; set; }
+        [ForeignKey(nameof(CreatorId))]
+        public virtual IdentityUser CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 }
