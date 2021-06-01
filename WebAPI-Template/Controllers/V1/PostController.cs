@@ -13,101 +13,101 @@ namespace WebAPI_Template.Controllers.V1
 {
     [ApiController]
     [Authorize]
-    public class TestController : ControllerBase
+    public class PostController : ControllerBase
     {
 
-        private readonly ITestService _testService;
+        private readonly IPostService _postService;
 
-        public TestController(ITestService testService)
+        public PostController(IPostService testService)
         {
-            _testService = testService;
+            _postService = testService;
 
         }
 
-        [HttpGet(ApiRoutes.Tests.GetAll)]
+        [HttpGet(ApiRoutes.Posts.GetAll)]
 
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _testService.GetTestsAsync());
+            return Ok(await _postService.GetPostsAsync());
         }
 
-        [HttpGet(ApiRoutes.Tests.GetAllWithClaims)]
+        [HttpGet(ApiRoutes.Posts.GetAllWithClaims)]
         [Authorize(Policy = "TagViewer")]
         public async Task<IActionResult> GetAllWithClaims()
         {
-            return Ok(await _testService.GetTestsAsync());
+            return Ok(await _postService.GetPostsAsync());
         }
 
-        [HttpGet(ApiRoutes.Tests.GetAllWithRoles)]
+        [HttpGet(ApiRoutes.Posts.GetAllWithRoles)]
         [Authorize(Roles = "Tester")]
         public async Task<IActionResult> GetAllWithRoles()
         {
-            return Ok(await _testService.GetTestsAsync());
+            return Ok(await _postService.GetPostsAsync());
         }
 
-        [HttpGet(ApiRoutes.Tests.GetAllWithAuthorizationHandles)]
+        [HttpGet(ApiRoutes.Posts.GetAllWithAuthorizationHandles)]
         [Authorize(Policy = "MustWorkForAnpt1992")]
         public async Task<IActionResult> GetAllWithAuthorizationHandles()
         {
-            return Ok(await _testService.GetTestsAsync());
+            return Ok(await _postService.GetPostsAsync());
         }
 
 
-        [HttpGet(ApiRoutes.Tests.Get)]
+        [HttpGet(ApiRoutes.Posts.Get)]
         public async Task<IActionResult> Get([FromRoute] Guid testId)
         {
-            var test = await _testService.GetTestByIdAsync(testId);
+            var test = await _postService.GetPostByIdAsync(testId);
             if (test == null)
                 return NotFound();
             return Ok(test);
         }
 
-        [HttpPost(ApiRoutes.Tests.Create)]
-        public async Task<IActionResult> Create([FromBody] CreateTestRequest testRequest)
+        [HttpPost(ApiRoutes.Posts.Create)]
+        public async Task<IActionResult> Create([FromBody] CreatePostRequest testRequest)
         {
-            var test = new Test
+            var test = new Post
             {
                 Name = testRequest.Name,
                 UserId = HttpContext.GetUserId()
             };
 
-            await _testService.CreateTestAsync(test);
+            await _postService.CreatePostAsync(test);
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var locationUrl = baseUrl + "/" + ApiRoutes.Tests.Get.Replace("{testId}", test.Id.ToString());
-            var response = new TestResponse { Id = test.Id };
+            var locationUrl = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{testId}", test.Id.ToString());
+            var response = new PostResponse { Id = test.Id };
 
             return Created(locationUrl, response);
         }
-        [HttpPut(ApiRoutes.Tests.Update)]
-        public async Task<IActionResult> Update([FromRoute] Guid testId, [FromBody] UpdateTestRequest request)
+        [HttpPut(ApiRoutes.Posts.Update)]
+        public async Task<IActionResult> Update([FromRoute] Guid testId, [FromBody] UpdatePostRequest request)
         {
-            var userOwnsTest = await _testService.UserOwnsTestAsync(testId, HttpContext.GetUserId());
+            var userOwnsTest = await _postService.UserOwnsPostAsync(testId, HttpContext.GetUserId());
             if (!userOwnsTest)
             {
                 return BadRequest(new { error = "You do not own this test" });
             }
 
-            var test = await _testService.GetTestByIdAsync(testId);
+            var test = await _postService.GetPostByIdAsync(testId);
             test.Name = request.Name;
 
 
-            var updated = await _testService.UpdateTestAsync(test);
+            var updated = await _postService.UpdatePostAsync(test);
 
             if (updated)
                 return Ok(test);
 
             return NotFound();
         }
-        [HttpDelete(ApiRoutes.Tests.Delete)]
+        [HttpDelete(ApiRoutes.Posts.Delete)]
         public async Task<IActionResult> Delete([FromRoute] Guid testId)
         {
-            var userOwnsTest = await _testService.UserOwnsTestAsync(testId, HttpContext.GetUserId());
+            var userOwnsTest = await _postService.UserOwnsPostAsync(testId, HttpContext.GetUserId());
             if (!userOwnsTest)
             {
                 return BadRequest(new { error = "You do not own this test" });
             }
 
-            var deleted = await _testService.DeleteTestAsync(testId);
+            var deleted = await _postService.DeletePostAsync(testId);
 
             if (deleted)
                 return NoContent();

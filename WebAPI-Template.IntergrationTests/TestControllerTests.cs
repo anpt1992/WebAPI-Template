@@ -19,11 +19,11 @@ namespace WebAPI_Template.IntergrationTests
             await AuthenticateAsync();
 
             //Act
-            var response = await TestClient.GetAsync(ApiRoutes.Tests.GetAll);
+            var response = await TestClient.GetAsync(ApiRoutes.Posts.GetAll);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            (await response.Content.ReadAsAsync<List<Test>>()).Should().BeEmpty();
+            (await response.Content.ReadAsAsync<List<Post>>()).Should().BeEmpty();
 
         }
 
@@ -32,14 +32,14 @@ namespace WebAPI_Template.IntergrationTests
         {
             // Arrange
             await AuthenticateAsync();
-            var createdTest = await CreateTestAsync(new CreateTestRequest { Name = "Test" });
+            var createdTest = await CreateTestAsync(new CreatePostRequest { Name = "Test" });
 
             //Act
-            var response = await TestClient.GetAsync(ApiRoutes.Tests.Get.Replace("{testId}", createdTest.Id.ToString()));
+            var response = await TestClient.GetAsync(ApiRoutes.Posts.Get.Replace("{testId}", createdTest.Id.ToString()));
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var returnedTest = await response.Content.ReadAsAsync<Test>();
+            var returnedTest = await response.Content.ReadAsAsync<Post>();
             returnedTest.Id.Should().Be(createdTest.Id);
             returnedTest.Name.Should().Be("Test");
         }

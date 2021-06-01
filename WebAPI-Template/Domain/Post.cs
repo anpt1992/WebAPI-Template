@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WebAPI_Template.Domain
 {
-    public class Test
+    public class Post
     {
         [Key]
         public Guid Id { get; set; }

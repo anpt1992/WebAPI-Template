@@ -11,16 +11,16 @@ namespace WebAPI_Template.Contracts.V1
         public const string Version = "v1";
         public const string Base = Root + "/" + Version;
 
-        public static class Tests
+        public static class Posts
         {
-            public const string GetAll = Base + "/tests";
-            public const string Get = Base + "/tests/{testId}";
-            public const string Create = Base + "/tests";
-            public const string Update = Base + "/tests/{testId}";
-            public const string Delete = Base + "/tests/{testId}";
-            public const string GetAllWithClaims = Base + "/tests_claims";
-            public const string GetAllWithRoles = Base + "/tests_roles";
-            public const string GetAllWithAuthorizationHandles = Base + "/tests_authorization_handlers";
+            public const string GetAll = Base + "/posts";
+            public const string Get = Base + "/posts/{testId}";
+            public const string Create = Base + "/posts";
+            public const string Update = Base + "/posts/{testId}";
+            public const string Delete = Base + "/posts/{testId}";
+            public const string GetAllWithClaims = Base + "/posts_claims";
+            public const string GetAllWithRoles = Base + "/posts_roles";
+            public const string GetAllWithAuthorizationHandles = Base + "/posts_authorization_handlers";
         }
 
         public static class Identity

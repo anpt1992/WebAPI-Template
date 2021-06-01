@@ -53,10 +53,10 @@ namespace WebAPI_Template.IntergrationTests
             TestClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", await GetJwtAsync());
         }
 
-        protected async Task<TestResponse> CreateTestAsync(CreateTestRequest request)
+        protected async Task<PostResponse> CreateTestAsync(CreatePostRequest request)
         {
-            var response = await TestClient.PostAsJsonAsync(ApiRoutes.Tests.Create, request);
-            return await response.Content.ReadAsAsync<TestResponse>();
+            var response = await TestClient.PostAsJsonAsync(ApiRoutes.Posts.Create, request);
+            return await response.Content.ReadAsAsync<PostResponse>();
         }
 
         private async Task<string> GetJwtAsync()

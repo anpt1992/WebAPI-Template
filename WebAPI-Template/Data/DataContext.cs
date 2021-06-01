@@ -20,7 +20,7 @@ namespace WebAPI_Template.Data
         {
         }
 
-        public DbSet<Test> Tests { get; set; }
+        public DbSet<Post> Posts { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -30,8 +30,8 @@ namespace WebAPI_Template.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Test>().Property<bool>("IsDeleted");
-            builder.Entity<Test>().HasQueryFilter(m => EF.Property<bool>(m, "IsDeleted") == false);
+            builder.Entity<Post>().Property<bool>("IsDeleted");
+            builder.Entity<Post>().HasQueryFilter(m => EF.Property<bool>(m, "IsDeleted") == false);
         }
         private void UpdateSoftDeleteStatuses()
         {
