@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAPI_Template.Contracts.V1;
@@ -18,11 +20,12 @@ namespace WebAPI_Template.Controllers.V1
     {
 
         private readonly IPostService _postService;
+        private readonly IMapper _mapper;
 
-        public PostController(IPostService testService)
+        public PostController(IPostService testService, IMapper mapper)
         {
             _postService = testService;
-
+            _mapper = mapper;
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
@@ -30,13 +33,9 @@ namespace WebAPI_Template.Controllers.V1
         public async Task<IActionResult> GetAll()
         {
             var posts = await _postService.GetPostsAsync();
+            var postResponses = _mapper.Map<List<PostResponse>>(posts);
 
-            return Ok(posts.Select(post => new PostResponse
-            {
-                Id = post.Id,
-                Name = post.Name,
-                Tags = post.Tags.Select(postTag => postTag.TagName)
-            }));
+            return Ok(postResponses);
         }
 
         [HttpGet(ApiRoutes.Posts.GetAllWithClaims)]
@@ -81,12 +80,7 @@ namespace WebAPI_Template.Controllers.V1
             var post = await _postService.GetPostByIdAsync(testId);
             if (post == null)
                 return NotFound();
-            return Ok(new PostResponse
-            {
-                Id = post.Id,
-                Name = post.Name,
-                Tags = post.Tags.Select(postTag => postTag.TagName)
-            });
+            return Ok(_mapper.Map<PostResponse>(post));
         }
 
         [HttpPost(ApiRoutes.Posts.Create)]
@@ -112,7 +106,7 @@ namespace WebAPI_Template.Controllers.V1
                 Tags = post.Tags.Select(postTag => postTag.TagName)
             };
 
-            return Created(locationUrl, response);
+            return Created(locationUrl, _mapper.Map<PostResponse>(post));
         }
         [HttpPut(ApiRoutes.Posts.Update)]
         public async Task<IActionResult> Update([FromRoute] Guid testId, [FromBody] UpdatePostRequest request)
@@ -131,12 +125,7 @@ namespace WebAPI_Template.Controllers.V1
             var updated = await _postService.UpdatePostAsync(post);
 
             if (updated)
-                return Ok(new PostResponse
-                {
-                    Id = post.Id,
-                    Name = post.Name,
-                    Tags = post.Tags.Select(postTag => postTag.TagName)
-                });
+                return Ok(_mapper.Map<PostResponse>(post));
 
             return NotFound();
         }
