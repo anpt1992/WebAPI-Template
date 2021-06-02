@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebAPI_Template.Authorization;
+using WebAPI_Template.Filter;
 using WebAPI_Template.Options;
 using WebAPI_Template.Services;
 
@@ -61,7 +63,13 @@ namespace WebAPI_Template.Installers
 
             services.AddSingleton<IAuthorizationHandler, WorkForCompanyHandler>();
 
-            services.AddControllers();
+            services
+                .AddControllers(options =>
+                {
+                    options.EnableEndpointRouting = false;
+                    options.Filters.Add<ValidationFilter>();
+                })
+                .AddFluentValidation(controllerConfig => controllerConfig.RegisterValidatorsFromAssemblyContaining<Startup>());
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI_Template", Version = "v1" });

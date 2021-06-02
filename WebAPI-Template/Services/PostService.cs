@@ -18,6 +18,7 @@ namespace WebAPI_Template.Services
         Task<bool> UserOwnsPostAsync(Guid testId, string userId);
         Task<List<Tag>> GetAllTagsAsync();
         Task<bool> DeleteTagAsync(string tagName);
+        Task<bool> CreateTagAsync(Tag tag);
     }
     public class PostService : IPostService
     {
@@ -92,6 +93,13 @@ namespace WebAPI_Template.Services
             var numDeleted = await _dataContext.SaveChangesAsync();
 
             return numDeleted > 0;
+        }
+        public async Task<bool> CreateTagAsync(Tag tag)
+        {           
+            _dataContext.Tags.Add(tag);
+            var numCreated = await _dataContext.SaveChangesAsync();
+
+            return numCreated > 0;
         }
 
         private async Task AddNewTagsAsync(Post post)

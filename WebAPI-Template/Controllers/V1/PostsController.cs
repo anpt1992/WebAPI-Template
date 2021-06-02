@@ -16,15 +16,15 @@ namespace WebAPI_Template.Controllers.V1
 {
     [ApiController]
     [Authorize]
-    public class PostController : ControllerBase
+    public class PostsController : ControllerBase
     {
 
         private readonly IPostService _postService;
         private readonly IMapper _mapper;
 
-        public PostController(IPostService testService, IMapper mapper)
+        public PostsController(IPostService postService, IMapper mapper)
         {
-            _postService = testService;
+            _postService = postService;
             _mapper = mapper;
         }
 
@@ -75,9 +75,9 @@ namespace WebAPI_Template.Controllers.V1
 
 
         [HttpGet(ApiRoutes.Posts.Get)]
-        public async Task<IActionResult> Get([FromRoute] Guid testId)
+        public async Task<IActionResult> Get([FromRoute] Guid postId)
         {
-            var post = await _postService.GetPostByIdAsync(testId);
+            var post = await _postService.GetPostByIdAsync(postId);
             if (post == null)
                 return NotFound();
             return Ok(_mapper.Map<PostResponse>(post));
@@ -98,26 +98,20 @@ namespace WebAPI_Template.Controllers.V1
             await _postService.CreatePostAsync(post);
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var locationUrl = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{testId}", post.Id.ToString());
-            var response = new PostResponse
-            {
-                Id = post.Id,
-                Name = post.Name,
-                Tags = post.Tags.Select(postTag => postTag.TagName)
-            };
-
+            var locationUrl = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
+         
             return Created(locationUrl, _mapper.Map<PostResponse>(post));
         }
         [HttpPut(ApiRoutes.Posts.Update)]
-        public async Task<IActionResult> Update([FromRoute] Guid testId, [FromBody] UpdatePostRequest request)
+        public async Task<IActionResult> Update([FromRoute] Guid postId, [FromBody] UpdatePostRequest request)
         {
-            var userOwnsTest = await _postService.UserOwnsPostAsync(testId, HttpContext.GetUserId());
+            var userOwnsTest = await _postService.UserOwnsPostAsync(postId, HttpContext.GetUserId());
             if (!userOwnsTest)
             {
                 return BadRequest(new { error = "You do not own this test" });
             }
 
-            var post = await _postService.GetPostByIdAsync(testId);
+            var post = await _postService.GetPostByIdAsync(postId);
             post.Name = request.Name;
             post.Tags = request.Tags.Select(tagName => new PostTag { TagName = tagName, PostId = post.Id }).ToList();
 
@@ -130,15 +124,15 @@ namespace WebAPI_Template.Controllers.V1
             return NotFound();
         }
         [HttpDelete(ApiRoutes.Posts.Delete)]
-        public async Task<IActionResult> Delete([FromRoute] Guid testId)
+        public async Task<IActionResult> Delete([FromRoute] Guid postId)
         {
-            var userOwnsTest = await _postService.UserOwnsPostAsync(testId, HttpContext.GetUserId());
+            var userOwnsTest = await _postService.UserOwnsPostAsync(postId, HttpContext.GetUserId());
             if (!userOwnsTest)
             {
                 return BadRequest(new { error = "You do not own this test" });
             }
 
-            var deleted = await _postService.DeletePostAsync(testId);
+            var deleted = await _postService.DeletePostAsync(postId);
 
             if (deleted)
                 return NoContent();
