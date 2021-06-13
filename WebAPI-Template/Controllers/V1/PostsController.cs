@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI_Template.Cache;
 using WebAPI_Template.Contracts.V1;
 using WebAPI_Template.Contracts.V1.Requests;
 using WebAPI_Template.Contracts.V1.Responses;
@@ -27,9 +28,9 @@ namespace WebAPI_Template.Controllers.V1
             _postService = postService;
             _mapper = mapper;
         }
-
+        [AllowAnonymous]
         [HttpGet(ApiRoutes.Posts.GetAll)]
-
+        [Cached(600)]
         public async Task<IActionResult> GetAll()
         {
             var posts = await _postService.GetPostsAsync();
