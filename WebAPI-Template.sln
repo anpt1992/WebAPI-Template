@@ -5,7 +5,12 @@ VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPI-Template", "WebAPI-Template\WebAPI-Template.csproj", "{9E041FC7-F2E0-4E5F-A1E9-1742E5500080}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI-Template.IntergrationTests", "WebAPI-Template.IntergrationTests\WebAPI-Template.IntergrationTests.csproj", "{868271FC-F909-451F-8FC4-5D30743EF427}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPI-Template.IntergrationTests", "WebAPI-Template.IntergrationTests\WebAPI-Template.IntergrationTests.csproj", "{868271FC-F909-451F-8FC4-5D30743EF427}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CFD77761-AEDF-4D7F-91E9-AEE3118AD171}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

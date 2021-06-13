@@ -12,6 +12,7 @@ services:
    - "7000:80"
   networks: 
    - localdev
+   - redis
   # depends_on: 
   #  - db-server
  
@@ -27,3 +28,9 @@ services:
   #   - "1400:1433"
   # networks: 
   #   - localdev
+
+ redis:
+  image: redis
+  container_name: redis
+  ports:
+  - "6379:6379"
