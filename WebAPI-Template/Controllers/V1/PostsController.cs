@@ -34,8 +34,8 @@ namespace WebAPI_Template.Controllers.V1
         }
         [AllowAnonymous]
         [HttpGet(ApiRoutes.Posts.GetAll)]
-        // enable cache redis
-        // [Cached(600)]
+        // enable cache redis and redis health
+       // [Cached(600)]
         public async Task<IActionResult> GetAll([FromQuery] PaginationQuery paginationQuery)
         {
             var pagination = _mapper.Map<PaginationFilter>(paginationQuery);
