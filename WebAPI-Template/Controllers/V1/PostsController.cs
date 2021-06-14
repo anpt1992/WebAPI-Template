@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 using WebAPI_Template.Cache;
 using WebAPI_Template.Contracts.V1;
 using WebAPI_Template.Contracts.V1.Requests;
+using WebAPI_Template.Contracts.V1.Requests.Queries;
 using WebAPI_Template.Contracts.V1.Responses;
 using WebAPI_Template.Domain;
 using WebAPI_Template.Extensions;
+using WebAPI_Template.Helpers;
 using WebAPI_Template.Services;
 
 namespace WebAPI_Template.Controllers.V1
@@ -22,21 +24,32 @@ namespace WebAPI_Template.Controllers.V1
 
         private readonly IPostService _postService;
         private readonly IMapper _mapper;
+        private readonly IUriService _uriService;
 
-        public PostsController(IPostService postService, IMapper mapper)
+        public PostsController(IPostService postService, IMapper mapper, IUriService uriService)
         {
             _postService = postService;
             _mapper = mapper;
+            _uriService = uriService;
         }
         [AllowAnonymous]
         [HttpGet(ApiRoutes.Posts.GetAll)]
-        [Cached(600)]
-        public async Task<IActionResult> GetAll()
+        // enable cache redis
+        // [Cached(600)]
+        public async Task<IActionResult> GetAll([FromQuery] PaginationQuery paginationQuery)
         {
-            var posts = await _postService.GetPostsAsync();
-            var postResponses = _mapper.Map<List<PostResponse>>(posts);
+            var pagination = _mapper.Map<PaginationFilter>(paginationQuery);
+            var posts = await _postService.GetPostsAsync(pagination);
+            var postsResponse = _mapper.Map<List<PostResponse>>(posts);
 
-            return Ok(postResponses);
+            if (pagination == null || pagination.PageNumber < 1 || pagination.PageNumber < 1)
+            {
+                return Ok(new PagedResponse<PostResponse>(postsResponse));
+            }
+
+            var paginationResponse = PaginationHelpers.CreatePaginatedResponse(_uriService, pagination, postsResponse);
+
+            return Ok(paginationResponse);
         }
 
         [HttpGet(ApiRoutes.Posts.GetAllWithClaims)]
@@ -81,7 +94,7 @@ namespace WebAPI_Template.Controllers.V1
             var post = await _postService.GetPostByIdAsync(postId);
             if (post == null)
                 return NotFound();
-            return Ok(_mapper.Map<PostResponse>(post));
+            return Ok(new Response<PostResponse>(_mapper.Map<PostResponse>(post)));
         }
 
         [HttpPost(ApiRoutes.Posts.Create)]
@@ -97,11 +110,10 @@ namespace WebAPI_Template.Controllers.V1
             };
 
             await _postService.CreatePostAsync(post);
+            var locationUrl = _uriService.GetPostUri(post.Id.ToString());
 
-            var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var locationUrl = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
-         
-            return Created(locationUrl, _mapper.Map<PostResponse>(post));
+
+            return Created(locationUrl, new Response<PostResponse>(_mapper.Map<PostResponse>(post)));
         }
         [HttpPut(ApiRoutes.Posts.Update)]
         public async Task<IActionResult> Update([FromRoute] Guid postId, [FromBody] UpdatePostRequest request)
@@ -120,7 +132,7 @@ namespace WebAPI_Template.Controllers.V1
             var updated = await _postService.UpdatePostAsync(post);
 
             if (updated)
-                return Ok(_mapper.Map<PostResponse>(post));
+                return Ok(new Response<PostResponse>(_mapper.Map<PostResponse>(post)));
 
             return NotFound();
         }

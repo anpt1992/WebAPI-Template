@@ -10,7 +10,7 @@ namespace WebAPI_Template.Services
 {
     public interface IPostService
     {
-        Task<List<Post>> GetPostsAsync();     
+        Task<List<Post>> GetPostsAsync(PaginationFilter paginationFilter = null);
         Task<bool> CreatePostAsync(Post test);
         Task<Post> GetPostByIdAsync(Guid testId);
         Task<bool> UpdatePostAsync(Post testToUpdate);
@@ -29,9 +29,16 @@ namespace WebAPI_Template.Services
             _dataContext = dataContext;
         }
 
-        public async Task<List<Post>> GetPostsAsync()
+        public async Task<List<Post>> GetPostsAsync(PaginationFilter paginationFilter = null)
         {
-            return await _dataContext.Posts.ToListAsync();
+            if (paginationFilter == null)
+            {
+                return await _dataContext.Posts.Include(x => x.Tags).ToListAsync();
+            }
+
+            var skip = (paginationFilter.PageNumber - 1) * paginationFilter.PageSize;
+
+            return await _dataContext.Posts.Include(x => x.Tags).OrderBy(x => x.Name).Skip(skip).Take(paginationFilter.PageSize).ToListAsync();
         }
 
         public async Task<Post> GetPostByIdAsync(Guid testId)
@@ -66,14 +73,14 @@ namespace WebAPI_Template.Services
         public async Task<bool> UserOwnsPostAsync(Guid testId, string userId)
         {
             var test = await _dataContext.Posts.AsNoTracking().SingleOrDefaultAsync(x => x.Id == testId);
-            if(test == null)
+            if (test == null)
             {
                 return false;
             }
-            if(test.UserId != userId)
+            if (test.UserId != userId)
             {
                 return false;
-            } 
+            }
             return true;
         }
         public async Task<List<Tag>> GetAllTagsAsync()
@@ -95,7 +102,7 @@ namespace WebAPI_Template.Services
             return numDeleted > 0;
         }
         public async Task<bool> CreateTagAsync(Tag tag)
-        {           
+        {
             _dataContext.Tags.Add(tag);
             var numCreated = await _dataContext.SaveChangesAsync();
 
