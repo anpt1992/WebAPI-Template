@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WebAPI_Template.Contracts.V1;
+using WebAPI_Template.Contracts;
 using WebAPI_Template.Contracts.V1.Requests.Queries;
 
 namespace WebAPI_Template.Services

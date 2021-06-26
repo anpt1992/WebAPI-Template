@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAPI_Template.Contracts;
-using WebAPI_Template.Contracts.V1.Requests;
-using WebAPI_Template.Contracts.V1.Responses;
+using WebAPI_Template.Contracts.V2.Requests;
+using WebAPI_Template.Contracts.V2.Responses;
 using WebAPI_Template.Services;
 
-namespace WebAPI_Template.Controllers.V1
+namespace WebAPI_Template.Controllers.V2
 {
-    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class IdentityController : ControllerBase
     {

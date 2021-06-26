@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -78,7 +79,11 @@ namespace WebAPI_Template.Installers
                     options.Filters.Add<ValidationFilter>();
                 })
                 .AddFluentValidation(controllerConfig => controllerConfig.RegisterValidatorsFromAssemblyContaining<Startup>());
-            
+            services.AddApiVersioning(option =>
+            {
+                option.AssumeDefaultVersionWhenUnspecified = true;
+                option.DefaultApiVersion = new ApiVersion(2, 0);
+            });
         }
     }
 }

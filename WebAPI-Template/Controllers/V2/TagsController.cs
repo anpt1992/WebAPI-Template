@@ -8,16 +8,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAPI_Template.Contracts;
-using WebAPI_Template.Contracts.V1.Requests;
-using WebAPI_Template.Contracts.V1.Responses;
+using WebAPI_Template.Contracts.V2.Requests;
+using WebAPI_Template.Contracts.V2.Responses;
 using WebAPI_Template.Domain;
 using WebAPI_Template.Extensions;
-using WebAPI_Template.Services.V1;
+using WebAPI_Template.Services.V2;
 
-namespace WebAPI_Template.Controllers.V1
+namespace WebAPI_Template.Controllers.V2
 {
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Policies.Roles.Admin + "," + Policies.Roles.Poster)]
-    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class TagsController : ControllerBase
     {

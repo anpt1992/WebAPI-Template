@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WebAPI_Template.Data;
 using WebAPI_Template.Domain;
 
-namespace WebAPI_Template.Services
+namespace WebAPI_Template.Services.V2
 {
     public interface IPostService
     {

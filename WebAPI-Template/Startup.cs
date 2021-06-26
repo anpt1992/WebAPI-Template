@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,7 +34,7 @@ namespace WebAPI_Template
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -45,8 +46,13 @@ namespace WebAPI_Template
                 app.UseHsts();
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI_Template v1"));
+            app.UseSwagger(options => { options.RouteTemplate = "swagger/{documentName}/docs.json"; });
+            app.UseSwaggerUI(options =>
+            {
+                options.RoutePrefix = "swagger";
+                foreach (var description in provider.ApiVersionDescriptions)
+                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/docs.json", description.GroupName.ToUpperInvariant());
+            });
 
             app.UseHealthChecks("/health",new HealthCheckOptions { 
                 ResponseWriter = async (context, report) =>
