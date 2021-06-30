@@ -1,5 +1,6 @@
 language: csharp
 mono: none
+dist: focal
 dotnet: 5.0.7
 install:
   - dotnet restore
