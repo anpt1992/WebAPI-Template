@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using WebAPI_Template.Contracts;
 using WebAPI_Template.Contracts.V1;
 using WebAPI_Template.Contracts.V1.Requests;
 using WebAPI_Template.Domain;
