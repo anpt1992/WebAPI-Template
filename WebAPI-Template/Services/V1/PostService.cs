@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI_Template.Contracts;
 using WebAPI_Template.Data;
 using WebAPI_Template.Domain;
 

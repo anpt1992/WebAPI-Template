@@ -4,7 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using WebAPI_Template.Data;
-
+using WebAPI_Template.Infrastructure;
+using WebAPI_Template.Infrastructure.Repositories;
+using WebAPI_Template.Services;
 
 namespace WebAPI_Template.Installers
 {
@@ -22,6 +24,14 @@ namespace WebAPI_Template.Installers
 
             services.AddScoped<Services.V1.IPostService, Services.V1.PostService>();
             services.AddScoped<Services.V2.IPostService, Services.V2.PostService>();
+
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            #region Repositories
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient<IPostRepository, PostRepository>();
+           
+            #endregion
         }
     }
 }

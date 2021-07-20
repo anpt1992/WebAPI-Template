@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPI_Template.Contracts;
 using WebAPI_Template.Contracts.V2.Requests;
+using WebAPI_Template.Contracts.V2.Requests.User;
 using WebAPI_Template.Contracts.V2.Responses;
 using WebAPI_Template.Services;
 

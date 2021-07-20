@@ -30,6 +30,7 @@ namespace WebAPI_Template
             services.InstallServicesInAssembly(Configuration);
 
             services.AddAutoMapper(typeof(Startup));
+        
 
         }
 

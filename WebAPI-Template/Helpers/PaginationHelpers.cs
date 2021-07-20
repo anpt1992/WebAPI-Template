@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI_Template.Contracts;
 using WebAPI_Template.Contracts.V1.Requests.Queries;
 using WebAPI_Template.Contracts.V1.Responses;
 using WebAPI_Template.Domain;

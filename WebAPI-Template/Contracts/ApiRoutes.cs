@@ -14,6 +14,7 @@ namespace WebAPI_Template.Contracts
         public static class Posts
         {
             public const string GetAll = Base + "/posts";
+            public const string GetAllAsync = Base + "/async-posts";
             public const string GetAll2 = Base + "/posts2";//only version 2
             public const string Get = Base + "/posts/{postId}";
             public const string Create = Base + "/posts";
