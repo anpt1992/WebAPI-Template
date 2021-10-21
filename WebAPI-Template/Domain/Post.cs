@@ -16,10 +16,7 @@ namespace WebAPI_Template.Domain
         public string Name { get; set; }
 
         public string UserId { get; set; }
-
-        [ForeignKey(nameof(UserId))]
-        public virtual IdentityUser User { get; set; }
-
+                
         public virtual List<PostTag> Tags { get; set; }
     }
 }

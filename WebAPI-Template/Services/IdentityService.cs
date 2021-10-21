@@ -22,13 +22,13 @@ namespace WebAPI_Template.Services
     }
     public class IdentityService : IIdentityService
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;        
         private readonly JwtSettings _jwtSettings;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly DataContext _context;
 
-        public IdentityService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters, DataContext context)
+        public IdentityService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters, DataContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -50,7 +50,7 @@ namespace WebAPI_Template.Services
             var newUserId = Guid.NewGuid();
 
 
-            var newUser = new IdentityUser
+            var newUser = new ApplicationUser
             {
                 Id = newUserId.ToString(),
                 Email = email,
@@ -176,7 +176,7 @@ namespace WebAPI_Template.Services
                 jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private async Task<AuthenticationResult> GenerateAuthenticationResultForUserAsync(IdentityUser user)
+        private async Task<AuthenticationResult> GenerateAuthenticationResultForUserAsync(ApplicationUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);

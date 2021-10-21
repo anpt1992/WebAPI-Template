@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using WebAPI_Template.Data;
+using WebAPI_Template.Domain;
 using WebAPI_Template.Infrastructure;
 using WebAPI_Template.Infrastructure.Repositories;
 using WebAPI_Template.Services;
@@ -20,7 +21,7 @@ namespace WebAPI_Template.Installers
             }
 
             services.AddDbContext<DataContext>(options => options.UseLazyLoadingProxies().UseMySql(configuration["ConnectionString:SimpleDB"], ServerVersion.AutoDetect(configuration["ConnectionString:SimpleDB"])));
-            services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<DataContext>();
+            services.AddDefaultIdentity<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<DataContext>();
 
             services.AddScoped<Services.V1.IPostService, Services.V1.PostService>();
             services.AddScoped<Services.V2.IPostService, Services.V2.PostService>();

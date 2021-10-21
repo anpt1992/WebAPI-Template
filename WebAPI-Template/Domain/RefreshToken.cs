@@ -16,6 +16,6 @@ namespace WebAPI_Template.Domain
         public bool Invalidated { get; set; }
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]
-        public virtual IdentityUser User { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }
