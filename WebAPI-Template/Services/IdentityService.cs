@@ -17,7 +17,7 @@ namespace WebAPI_Template.Services
     public interface IIdentityService
     {
         Task<AuthenticationResult> LoginAsync(string email, string password);
-        Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshtoken);
+        Task<AuthenticationResult> RefreshTokenAsync(string refreshtoken);
         Task<AuthenticationResult> RegisterAsync(string email, string password);
     }
     public class IdentityService : IIdentityService
@@ -100,23 +100,8 @@ namespace WebAPI_Template.Services
             return await GenerateAuthenticationResultForUserAsync(user);
         }
 
-        public async Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshtoken)
-        {
-            var validatedToken = GetPrincipalFromToken(token);
-            if (validatedToken == null)
-            {
-                return new AuthenticationResult { Errors = new[] { "Invalid Token" } };
-            }
-
-            var expirationDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-            var expirationDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                .AddSeconds(expirationDateUnix);
-
-            if (expirationDateTimeUtc > DateTime.UtcNow)
-            {
-                return new AuthenticationResult { Errors = new[] { "This token hasn't expired yet" } };
-            }
-            var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+        public async Task<AuthenticationResult> RefreshTokenAsync(string refreshtoken)
+        {            
             var storedRefreshToken = await _context.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshtoken);
 
             if (storedRefreshToken == null)
@@ -139,16 +124,32 @@ namespace WebAPI_Template.Services
                 return new AuthenticationResult { Errors = new[] { "This refresh token has been used" } };
             }
 
-            if (storedRefreshToken.JwtId != jti)
-            {
-                return new AuthenticationResult { Errors = new[] { "This refresh token does not match this JWT" } };
-            }
+            //if (storedRefreshToken.JwtId != jti)
+            //{
+            //    return new AuthenticationResult { Errors = new[] { "This refresh token does not match this JWT" } };
+            //}
+
+            //var validatedToken = GetPrincipalFromToken(token);
+            //if (validatedToken == null)
+            //{
+            //    return new AuthenticationResult { Errors = new[] { "Invalid Token" } };
+            //}
+
+            //var expirationDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+            //var expirationDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            //    .AddSeconds(expirationDateUnix);
+
+            //if (expirationDateTimeUtc > DateTime.UtcNow)
+            //{
+            //    return new AuthenticationResult { Errors = new[] { "This token hasn't expired yet" } };
+            //}
+
 
             storedRefreshToken.Used = true;
             _context.RefreshTokens.Update(storedRefreshToken);
             await _context.SaveChangesAsync();
 
-            var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
+            var user = await _userManager.FindByIdAsync(storedRefreshToken.UserId);
             return await GenerateAuthenticationResultForUserAsync(user);
         }
 

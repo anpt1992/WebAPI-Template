@@ -71,7 +71,7 @@ namespace WebAPI_Template.Controllers.V1
         [HttpPost(ApiRoutes.Identity.Refresh)]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
         {
-            var authResponse = await _identityService.RefreshTokenAsync(request.Token, request.RefreshToken);
+            var authResponse = await _identityService.RefreshTokenAsync(request.RefreshToken);
             if (!authResponse.Success)
             {
                 return BadRequest(new AuthFailedResponse
