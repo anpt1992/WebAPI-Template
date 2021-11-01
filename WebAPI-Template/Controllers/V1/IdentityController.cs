@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,10 +69,11 @@ namespace WebAPI_Template.Controllers.V1
                 RefreshToken = authResponse.RefreshToken
             });
         }
+        [Authorize]
         [HttpPost(ApiRoutes.Identity.Refresh)]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
         {
-            var authResponse = await _identityService.RefreshTokenAsync(request.RefreshToken);
+            var authResponse = await _identityService.RefreshTokenAsync(request.RefreshToken, User);
             if (!authResponse.Success)
             {
                 return BadRequest(new AuthFailedResponse

@@ -17,13 +17,13 @@ namespace WebAPI_Template.Services
     public interface IIdentityService
     {
         Task<AuthenticationResult> LoginAsync(string email, string password);
-        Task<AuthenticationResult> RefreshTokenAsync(string refreshtoken);
+        Task<AuthenticationResult> RefreshTokenAsync(string refreshtoken, ClaimsPrincipal validatedToken);
         Task<AuthenticationResult> RegisterAsync(string email, string password);
     }
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;        
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JwtSettings _jwtSettings;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly DataContext _context;
@@ -73,7 +73,7 @@ namespace WebAPI_Template.Services
             //    await _userManager.AddClaimAsync(newUser, new Claim("tags.view", "true"));
 
             // use Roles
-            await _userManager.AddToRoleAsync(newUser, "Tester");        
+            await _userManager.AddToRoleAsync(newUser, "Tester");
 
             return await GenerateAuthenticationResultForUserAsync(newUser);
         }
@@ -100,10 +100,21 @@ namespace WebAPI_Template.Services
             return await GenerateAuthenticationResultForUserAsync(user);
         }
 
-        public async Task<AuthenticationResult> RefreshTokenAsync(string refreshtoken)
-        {            
-            var storedRefreshToken = await _context.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshtoken);
+        public async Task<AuthenticationResult> RefreshTokenAsync(string refreshtoken, ClaimsPrincipal validatedToken)
+        {
+            if (validatedToken == null)
+            {
+                return new AuthenticationResult { Errors = new[] { "Invalid Token" } };
+            }
 
+            var expirationDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+            var expirationDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(expirationDateUnix);
+            if (expirationDateTimeUtc > DateTime.UtcNow)
+            {
+                return new AuthenticationResult { Errors = new[] { "This token hasn't expired yet" } };
+            }
+
+            var storedRefreshToken = await _context.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshtoken);           
             if (storedRefreshToken == null)
             {
                 return new AuthenticationResult { Errors = new[] { "This refresh token does not exist" } };
@@ -124,26 +135,11 @@ namespace WebAPI_Template.Services
                 return new AuthenticationResult { Errors = new[] { "This refresh token has been used" } };
             }
 
-            //if (storedRefreshToken.JwtId != jti)
-            //{
-            //    return new AuthenticationResult { Errors = new[] { "This refresh token does not match this JWT" } };
-            //}
-
-            //var validatedToken = GetPrincipalFromToken(token);
-            //if (validatedToken == null)
-            //{
-            //    return new AuthenticationResult { Errors = new[] { "Invalid Token" } };
-            //}
-
-            //var expirationDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-            //var expirationDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            //    .AddSeconds(expirationDateUnix);
-
-            //if (expirationDateTimeUtc > DateTime.UtcNow)
-            //{
-            //    return new AuthenticationResult { Errors = new[] { "This token hasn't expired yet" } };
-            //}
-
+            var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+            if (storedRefreshToken.JwtId != jti)
+            {
+                return new AuthenticationResult { Errors = new[] { "This refresh token does not match this JWT" } };
+            }
 
             storedRefreshToken.Used = true;
             _context.RefreshTokens.Update(storedRefreshToken);
