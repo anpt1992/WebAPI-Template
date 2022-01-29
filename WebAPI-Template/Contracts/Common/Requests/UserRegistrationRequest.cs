@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebAPI_Template.Contracts.V1.Requests
+namespace WebAPI_Template.Contracts.Common.Requests
 {
     public class UserRegistrationRequest
     {
