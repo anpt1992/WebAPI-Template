@@ -4,14 +4,13 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using WebAPI_Template.Data;
 using System.Net.Http.Json;
-using WebAPI_Template.Contracts.V1;
+using WebAPI_Template.Contracts.Common.Requests;
+using WebAPI_Template.Contracts.Common.Responses;
 using WebAPI_Template.Contracts.V1.Requests;
 using WebAPI_Template.Contracts.V1.Responses;
 using System.Linq;
-using System;
 using WebAPI_Template.Contracts;
 
 namespace WebAPI_Template.IntergrationTests

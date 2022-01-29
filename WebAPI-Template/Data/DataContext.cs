@@ -10,7 +10,7 @@ using WebAPI_Template.Domain;
 
 namespace WebAPI_Template.Data
 {
-    public class DataContext : IdentityDbContext
+    public class DataContext : IdentityDbContext<ApplicationUser>
     {
         public DataContext()
         {

@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.IdentityModel.Tokens.Jwt;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAPI_Template.Contracts;
-using WebAPI_Template.Contracts.V2.Requests;
-using WebAPI_Template.Contracts.V2.Requests.User;
-using WebAPI_Template.Contracts.V2.Responses;
+using WebAPI_Template.Contracts.Common.Requests;
+using WebAPI_Template.Contracts.Common.Responses;
 using WebAPI_Template.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI_Template.Controllers.V2
 {
@@ -88,5 +89,6 @@ namespace WebAPI_Template.Controllers.V2
                 RefreshToken = authResponse.RefreshToken
             });
         }
+
     }
 }

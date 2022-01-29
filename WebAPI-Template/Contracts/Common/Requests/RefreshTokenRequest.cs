@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebAPI_Template.Contracts.V1.Requests
+namespace WebAPI_Template.Contracts.Common.Requests
 {
     public class RefreshTokenRequest
     {        

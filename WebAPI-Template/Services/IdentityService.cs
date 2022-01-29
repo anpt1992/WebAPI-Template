@@ -114,7 +114,7 @@ namespace WebAPI_Template.Services
                 return new AuthenticationResult { Errors = new[] { "This token hasn't expired yet" } };
             }
 
-            var storedRefreshToken = await _context.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshtoken);           
+            var storedRefreshToken = await _context.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshtoken);
             if (storedRefreshToken == null)
             {
                 return new AuthenticationResult { Errors = new[] { "This refresh token does not exist" } };
@@ -149,23 +149,7 @@ namespace WebAPI_Template.Services
             return await GenerateAuthenticationResultForUserAsync(user);
         }
 
-        private ClaimsPrincipal GetPrincipalFromToken(string token)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            try
-            {
-                var principal = tokenHandler.ValidateToken(token, _tokenValidationParameters, out var validatedToken);
-                if (!IsJwtWithValidSecurityAlgorithm(validatedToken))
-                {
-                    return null;
-                }
-                return principal;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+
 
         private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
         {

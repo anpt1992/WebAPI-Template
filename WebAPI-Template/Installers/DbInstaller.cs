@@ -21,7 +21,11 @@ namespace WebAPI_Template.Installers
             }
 
             services.AddDbContext<DataContext>(options => options.UseLazyLoadingProxies().UseMySql(configuration["ConnectionString:SimpleDB"], ServerVersion.AutoDetect(configuration["ConnectionString:SimpleDB"])));
-            services.AddDefaultIdentity<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<DataContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<DataContext>()
+            .AddDefaultUI()
+            .AddDefaultTokenProviders();
+
 
             services.AddScoped<Services.V1.IPostService, Services.V1.PostService>();
             services.AddScoped<Services.V2.IPostService, Services.V2.PostService>();
