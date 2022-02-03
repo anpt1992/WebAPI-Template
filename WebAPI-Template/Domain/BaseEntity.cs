@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAPI_Template.Domain
 {
@@ -12,19 +13,20 @@ namespace WebAPI_Template.Domain
         [ScaffoldColumn(false)]
         public DateTime CreatedDate { get; set; }
 
-        [MaxLength(256)]
         [ScaffoldColumn(false)]
-        public string? CreatedBy { get; set; }
+        public Guid? CreatorId { get; set; }
 
         [ScaffoldColumn(false)]
         public DateTime UpdatedDate { get; set; }
 
-        [MaxLength(256)]
         [ScaffoldColumn(false)]
-        public string? UpdatedBy { get; set; }
+        public Guid? UpdaterId { get; set; }
 
         [ScaffoldColumn(false)]
         public byte SoftDeleteLevel { get; set; }
+        [ForeignKey(nameof(CreatorId))]
+        public virtual ApplicationUser CreatedBy { get; set; }
+        [ForeignKey(nameof(UpdaterId))]
+        public virtual ApplicationUser UpdatedBy { get; set; }
     }
-
 }
