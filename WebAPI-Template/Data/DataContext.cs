@@ -64,10 +64,6 @@ namespace WebAPI_Template.Data
                 entity.ToTable("UserTokens");
             });
             builder.Entity<PostTag>().Ignore(postTag => postTag.Post).HasKey(postTag => new { postTag.PostId, postTag.TagName });
-
-            builder.Entity<Post>().HasOne(p => p.CreatedBy).WithMany(u => u.Posts);
-            
-            // builder.Entity<Post>().HasOne(p => p.UpdatedBy).WithMany(u => u.Posts);
         }
         //private void UpdateSoftDeleteStatuses()
         //{

@@ -7,26 +7,14 @@ namespace WebAPI_Template.Domain
     public abstract class BaseEntity
     {
         [Key]
-        [ScaffoldColumn(false)]
         public Guid Id { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; }
+        public DateTime? DeletedDate { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
-        [ScaffoldColumn(false)]
-        public DateTime CreatedDate { get; set; }
-
-        [ScaffoldColumn(false)]
-        public Guid? CreatorId { get; set; }
-
-        [ScaffoldColumn(false)]
-        public DateTime UpdatedDate { get; set; }
-
-        [ScaffoldColumn(false)]
-        public Guid? UpdaterId { get; set; }
-
-        [ScaffoldColumn(false)]
-        public byte SoftDeleteLevel { get; set; }
-        [ForeignKey(nameof(CreatorId))]
-        public virtual ApplicationUser CreatedBy { get; set; }
-        [ForeignKey(nameof(UpdaterId))]
-        public virtual ApplicationUser UpdatedBy { get; set; }
+        [ForeignKey(nameof(CreatedBy))]
+        public virtual ApplicationUser CreatorId { get; set; }
     }
 }
