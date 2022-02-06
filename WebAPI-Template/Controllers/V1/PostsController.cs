@@ -107,7 +107,7 @@ namespace WebAPI_Template.Controllers.V1
             {
                 Id = newPostId,
                 Name = postRequest.Name,
-                UserId = HttpContext.GetUserId(),
+                CreatorId = HttpContext.GetUserId(),
                 Tags = postRequest.Tags.Select(tagName => new PostTag { TagName = tagName, PostId = newPostId }).ToList()
             };
 

@@ -78,7 +78,7 @@ namespace WebAPI_Template.Services.V1
             {
                 return false;
             }
-            if (test.UserId != userId)
+            if (test.CreatorId != userId)
             {
                 return false;
             }
@@ -124,7 +124,7 @@ namespace WebAPI_Template.Services.V1
                 _dataContext.Tags.Add(new Tag
                 {
                     Name = newTag.TagName,
-                    CreatorId = post.UserId,
+                    CreatorId = post.CreatorId,
                     CreatedOn = DateTime.UtcNow
                 });
             }
