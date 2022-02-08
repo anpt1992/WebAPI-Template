@@ -64,48 +64,51 @@ namespace WebAPI_Template.Data
                 entity.ToTable("UserTokens");
             });
             builder.Entity<PostTag>().Ignore(postTag => postTag.Post).HasKey(postTag => new { postTag.PostId, postTag.TagName });
+
+            builder.Entity<Post>().Property<bool>("IsDeleted").HasDefaultValue(false);
+            builder.Entity<Post>().HasQueryFilter(m => EF.Property<bool>(m, "IsDeleted") == false);
         }
-        //private void UpdateSoftDeleteStatuses()
-        //{
-        //    foreach (var entry in ChangeTracker.Entries())
-        //    {
-        //        if (!entry.CurrentValues.TryGetValue("IsDeleted", out bool _))
-        //        {
-        //            continue;
-        //        }
-        //        switch (entry.State)
-        //        {
-        //            case EntityState.Added:
-        //                entry.CurrentValues["IsDeleted"] = false;
-        //                break;
-        //            case EntityState.Deleted:
-        //                entry.State = EntityState.Modified;
-        //                entry.CurrentValues["IsDeleted"] = true;
-        //                break;
-        //        }
-        //    }
-        //}
-        //public override int SaveChanges()
-        //{
-        //    UpdateSoftDeleteStatuses();
-        //    return base.SaveChanges();
-        //}
+        private void UpdateSoftDeleteStatuses()
+        {
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                if (!entry.CurrentValues.TryGetValue("IsDeleted", out bool _))
+                {
+                    continue;
+                }
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.CurrentValues["IsDeleted"] = false;
+                        break;
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entry.CurrentValues["IsDeleted"] = true;
+                        break;
+                }
+            }
+        }
+        public override int SaveChanges()
+        {
+            UpdateSoftDeleteStatuses();
+            return base.SaveChanges();
+        }
 
-        //public override int SaveChanges(bool acceptAllChangesOnSuccess)
-        //{
-        //    UpdateSoftDeleteStatuses();
-        //    return base.SaveChanges(acceptAllChangesOnSuccess);
-        //}
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            UpdateSoftDeleteStatuses();
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
 
-        //public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        //{
-        //    UpdateSoftDeleteStatuses();
-        //    return base.SaveChangesAsync(cancellationToken);
-        //}
-        //public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-        //{
-        //    UpdateSoftDeleteStatuses();
-        //    return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        //}
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            UpdateSoftDeleteStatuses();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            UpdateSoftDeleteStatuses();
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
     }
 }
