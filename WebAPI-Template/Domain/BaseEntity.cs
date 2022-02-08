@@ -8,13 +8,13 @@ namespace WebAPI_Template.Domain
     {
         [Key]
         public Guid Id { get; set; }
-        public string CreatedBy { get; set; }
+        public string CreatorId { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? UpdatedDate { get; set; }
         public DateTime? DeletedDate { get; set; }
         public bool IsDeleted { get; set; } = false;
 
-        [ForeignKey(nameof(CreatedBy))]
-        public virtual ApplicationUser CreatorId { get; set; }
+        [ForeignKey(nameof(CreatorId))]
+        public virtual ApplicationUser CreatedBy { get; set; }
     }
 }
